@@ -4,6 +4,9 @@ Step into desired folder and create new virtual environment:
 ```bash
 python -m pip install --user virtualenv
 ```
+```bash
+python -m venv env
+```
 Activate virtual environment:
 ```bash
 .\env\Scripts\activate
