@@ -1,0 +1,25 @@
+## Installation (Windows)
+
+Step into desired folder and create new virtual environment:
+```bash
+python -m pip install --user virtualenv
+```
+Activate virtual environment:
+```bash
+.\env\Scripts\activate
+```
+Install required packages:
+```bash
+pip install -r requirements.txt
+```
+Fill secrets.py with credentials. Password must be a Gmail app password.
+
+## Execution (Windows)
+Step into installation folder and activate virtual environment:
+```bash
+.\env\Scripts\activate
+```
+Run:
+```bash
+python fravega_ws.py
+```
