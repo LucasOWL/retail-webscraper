@@ -31,10 +31,16 @@ class Webscraper(object):
         return f'{self.__class__.__name__}: {self.urlsKeywordsDict}'
     
     def checkProducts(self):
+        """Returns a dictionary of product: price for every product in every webpage
+        """
+
         return {webpage: self.webpageToObject[webpage].checkProducts() for webpage in self.webpageToObject}
     
-        # Complete process
+    # Complete process
     def checkNewProducts(self):
+        """Verifies if there is a new product for every webpage and sends an email when it occurs
+        """
+
         initial_products_prices = self.checkProducts()
         send_email_flag = True
         while True:
@@ -58,7 +64,6 @@ class Webscraper(object):
             
             time.sleep(self.timeout * 60)
 
-    # Notification
     def sendEmail(self, productsPrices):
         # Start e-mail server
         server = smtplib.SMTP('smtp.gmail.com', 587)

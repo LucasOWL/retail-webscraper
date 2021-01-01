@@ -5,6 +5,9 @@ from classes.BaseWebscraper import BaseWebscraper
 class FravegaWebscraper(BaseWebscraper):
     
     def checkProducts(self):
+        """Returns a dictionary of product: price for every product listed on webpage
+        """
+        
         uClient = urlopen(self.url)
         page_html = uClient.read()
         page_soup = BeautifulSoup(page_html, 'html.parser')
