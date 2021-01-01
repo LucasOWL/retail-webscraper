@@ -45,22 +45,26 @@ class Webscraper(object):
         send_email_flag = True
         while True:
             now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            
-            new_products_prices = self.checkProducts()
-            for webpage in new_products_prices:
-                for product in new_products_prices[webpage]:
-                    # Send email when there is a new product
-                    if product != '' and product not in initial_products_prices[webpage]:
-                        send_email_flag = True
-                        break
-            
-            if send_email_flag:
-                self.sendEmail(productsPrices=new_products_prices)
-                print(f'E-mail has been sent. Time: {now}')
-                initial_products_prices = new_products_prices
-                send_email_flag = False
-            else:
-                print(f'Nothing new. Time: {now}')
+
+            try:
+                new_products_prices = self.checkProducts()
+                for webpage in new_products_prices:
+                    for product in new_products_prices[webpage]:
+                        # Send email when there is a new product
+                        if product != '' and product not in initial_products_prices[webpage]:
+                            send_email_flag = True
+                            break
+                
+                if send_email_flag:
+                    self.sendEmail(productsPrices=new_products_prices)
+                    print(f'E-mail has been sent. Time: {now}')
+                    initial_products_prices = new_products_prices
+                    send_email_flag = False
+                else:
+                    print(f'Nothing new. Time: {now}')
+            except Exception as e:
+                print(f"Error: '{e}'. Time: {now}")
+                continue
             
             time.sleep(self.timeout * 60)
 
