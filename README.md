@@ -24,5 +24,5 @@ Step into installation folder and activate virtual environment:
 ```
 Run:
 ```bash
-python fravega_ws.py
+python Webscraper.py
 ```
