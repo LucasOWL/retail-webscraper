@@ -3,8 +3,8 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import time
 from datetime import datetime
-from FravegaWebscraper import FravegaWebscraper
-from CetrogarWebscraper import CetrogarWebscraper
+from classes.FravegaWebscraper import FravegaWebscraper
+from classes.CetrogarWebscraper import CetrogarWebscraper
 from parameters import URLS_KEYWORDS, EMAIL_SUBJECT, USERNAME, PASSWORD, TO_ADDRESS, TIMEOUT
 
 class Webscraper(object):

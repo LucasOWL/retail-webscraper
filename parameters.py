@@ -4,7 +4,7 @@ from secrets import username, password, to_address
 #   'keywords': None
 URLS_KEYWORDS = {
         'Frávega': {
-            'URL': 'https://www.fravega.com/l/?keyword=3080',
+            'URL': 'https://www.fravega.com/l/?keyword=ps5',
             'keywords': ['PS5', 'Playstation 5', 'Play station 5']},
         'Cetrogar': {
             'URL': 'https://www.cetrogar.com.ar/catalogsearch/result/?q=ps5',

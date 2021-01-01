@@ -15,7 +15,7 @@ Install required packages:
 ```bash
 pip install -r requirements.txt
 ```
-Fill secrets.py with credentials. Password must be a Gmail app password.
+Modify parameters.py and fill secrets.py with credentials. Password must be a Gmail app password.
 
 ## Execution (Windows)
 Step into installation folder and activate virtual environment:

@@ -1,8 +1,8 @@
 from urllib.request import urlopen
 from bs4 import BeautifulSoup
-from BaseWebscraper import BaseWebscraper
+from classes.BaseWebscraper import BaseWebscraper
 
-class FravegaWebscraper(BaseWebscraper):
+class CetrogarWebscraper(BaseWebscraper):
     
     def checkProducts(self):
         uClient = urlopen(self.url)
@@ -11,7 +11,7 @@ class FravegaWebscraper(BaseWebscraper):
         
         products_prices = {'': ''}
         # Find products and prices
-        items_grid = page_soup.find('ul', {'name': 'itemsGrid'})
+        items_grid = page_soup.find('div', {'class': 'products wrapper grid products-grid'})
         if items_grid is not None:
             products_li = items_grid.find_all('li')
             products_prices = {
@@ -22,7 +22,7 @@ class FravegaWebscraper(BaseWebscraper):
         return products_prices
 
     def getProduct(self, bs4Element):
-        return bs4Element.h4.text.strip()
+        return bs4Element.find('a', {'class': 'product-item-link'}).text.replace('\n', '').strip()
 
     def getFinalPrice(self, bs4Element):
-        return bs4Element.find('div', {'data-test-id': 'product-price'}).span.text.strip()
+        return bs4Element.find('span', {'data-price-type': 'finalPrice'}).find('span', {'class': 'price'}).text.strip()
