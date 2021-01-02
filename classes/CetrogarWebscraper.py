@@ -4,7 +4,7 @@ from classes.BaseWebscraper import BaseWebscraper
 
 class CetrogarWebscraper(BaseWebscraper):
     
-    def checkProducts(self):
+    def getProducts(self):
         """Returns a dictionary of product: price for every product listed on webpage
         """
 

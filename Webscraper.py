@@ -5,6 +5,7 @@ import time
 from datetime import datetime
 from classes.FravegaWebscraper import FravegaWebscraper
 from classes.CetrogarWebscraper import CetrogarWebscraper
+from classes.SonyWebscraper import SonyWebscraper
 from parameters import URLS_KEYWORDS, EMAIL_SUBJECT, USERNAME, PASSWORD, TO_ADDRESS, TIMEOUT
 
 class Webscraper(object):
@@ -21,7 +22,9 @@ class Webscraper(object):
             'Frávega': FravegaWebscraper(url=self.urlsKeywordsDict['Frávega']['URL'],
                                          keywords=self.urlsKeywordsDict['Frávega']['keywords']),
             'Cetrogar': CetrogarWebscraper(url=self.urlsKeywordsDict['Cetrogar']['URL'],
-                                           keywords=self.urlsKeywordsDict['Cetrogar']['keywords'])
+                                           keywords=self.urlsKeywordsDict['Cetrogar']['keywords']),
+            'Sony': SonyWebscraper(url=self.urlsKeywordsDict['Sony']['URL'],
+                                           keywords=self.urlsKeywordsDict['Sony']['keywords']),
         }
     
     def __repr__(self):
@@ -30,36 +33,38 @@ class Webscraper(object):
     def __str__(self):
         return f'{self.__class__.__name__}: {self.urlsKeywordsDict}'
     
-    def checkProducts(self):
+    def getAllProducts(self):
         """Returns a dictionary of product: price for every product in every webpage
         """
 
-        return {webpage: self.webpageToObject[webpage].checkProducts() for webpage in self.webpageToObject}
+        return {webpage: self.webpageToObject[webpage].getProducts() for webpage in self.webpageToObject}
     
     # Complete process
     def checkNewProducts(self):
         """Verifies if there is a new product for every webpage and sends an email when it occurs
         """
 
-        initial_products_prices = self.checkProducts()
+        initial_products_prices = self.getAllProducts()
         send_email_flag = True
         while True:
             now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
             try:
-                new_products_prices = self.checkProducts()
+                new_products_prices = self.getAllProducts()
                 for webpage in new_products_prices:
                     for product in new_products_prices[webpage]:
                         # Send email when there is a new product
                         if product != '' and product not in initial_products_prices[webpage]:
                             send_email_flag = True
                             break
+                    if send_email_flag:
+                        break
                 
                 if send_email_flag:
                     self.sendEmail(productsPrices=new_products_prices)
                     print(f'E-mail has been sent. Time: {now}')
-                    initial_products_prices = new_products_prices
                     send_email_flag = False
+                    initial_products_prices = new_products_prices
                 else:
                     print(f'Nothing new. Time: {now}')
             except Exception as e:
@@ -85,8 +90,8 @@ class Webscraper(object):
         body = ''
         for webpage in productsPrices:
             body += f'{webpage.upper()}:\n'
-            for product, price in productsPrices[webpage].items():
-                body += f'- {product}: {price}\n'
+            for product in sorted(productsPrices[webpage]):
+                body += f'- {product}: {productsPrices[webpage][product]}\n'
             body += f"\nURL: {self.urlsKeywordsDict[webpage]['URL']}\n\n\n"
         body = MIMEText(body.encode('utf-8'), 'plain', _charset='utf-8')
         message.attach(body)
