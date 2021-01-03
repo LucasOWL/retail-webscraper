@@ -3,6 +3,8 @@ from bs4 import BeautifulSoup
 
 class BaseWebscraper(object):
     
+    NO_STOCK_STATUS = 'Sin stock'
+
     def __init__(self, url, keywords=None):
         self.url = url
         self.keywords = keywords

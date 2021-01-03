@@ -3,6 +3,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import time
 from datetime import datetime
+from classes.BaseWebscraper import BaseWebscraper
 from classes.FravegaWebscraper import FravegaWebscraper
 from classes.CetrogarWebscraper import CetrogarWebscraper
 from classes.SonyWebscraper import SonyWebscraper
@@ -53,8 +54,11 @@ class Webscraper(object):
                 new_products_prices = self.getAllProducts()
                 for webpage in new_products_prices:
                     for product in new_products_prices[webpage]:
-                        # Send email when there is a new product
-                        if product != '' and product not in initial_products_prices[webpage]:
+                        # Send email when there is a new product or if a product that did not have stock has been restocked
+                        no_stock_status = BaseWebscraper.NO_STOCK_STATUS
+                        product_restocked_flag = initial_products_prices[webpage][product] == no_stock_status and \
+                                                 new_products_prices[webpage][product] != no_stock_status 
+                        if product != '' and (product not in initial_products_prices[webpage] or product_restocked_flag):
                             send_email_flag = True
                             break
                     if send_email_flag:
@@ -62,7 +66,7 @@ class Webscraper(object):
                 
                 if send_email_flag:
                     self.sendEmail(productsPrices=new_products_prices)
-                    print(f'E-mail has been sent. Time: {now}')
+                    print(f'NEW PRODUCTS ALERT! E-mail has been sent. Time: {now}')
                     send_email_flag = False
                     initial_products_prices = new_products_prices
                 else:

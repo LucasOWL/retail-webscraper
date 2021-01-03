@@ -60,10 +60,10 @@ class SonyWebscraper(BaseWebscraper):
         return products_prices
 
     def getProduct(self, itemInfo):
-        return itemInfo['name']
+        return itemInfo['name'].strip()
 
     def getFinalPrice(self, itemInfo):
         if itemInfo['available']:
-            return itemInfo['skus'][0]['bestPriceFormated']
+            return itemInfo['skus'][0]['bestPriceFormated'].strip()
         else:
-            return 'Sin stock'
+            return self.NO_STOCK_STATUS
