@@ -1,3 +1,4 @@
+import os
 from secrets import username, password, to_address
 
 # Si no querés usar keywords, reemplazar todo el corchete por None. Ejemplo:
@@ -13,9 +14,16 @@ URLS_KEYWORDS = {
         'Sony': {
             'URL': 'https://store.sony.com.ar/ps5',
             'keywords': None},
+        'Jumbo': {
+            'URL': 'https://www.jumbo.com.ar/busca/?ft=ps5',
+            'keywords': None},
+        'Disco': {
+            'URL': 'https://www.disco.com.ar/Comprar/Home.aspx#_atCategory=false&_atGrilla=true&_query=ps5',
+            'keywords': None},
     }
 EMAIL_SUBJECT = 'Hay nuevos productos de PS5'
 USERNAME = username
 PASSWORD = password
 TO_ADDRESS = to_address
 TIMEOUT = 5  # Minutes
+CHROMEDRIVER_PATH = os.path.join(r'C:\webdrivers\chromedriver.exe')

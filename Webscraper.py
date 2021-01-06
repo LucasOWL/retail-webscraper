@@ -7,9 +7,23 @@ from classes.BaseWebscraper import BaseWebscraper
 from classes.FravegaWebscraper import FravegaWebscraper
 from classes.CetrogarWebscraper import CetrogarWebscraper
 from classes.SonyWebscraper import SonyWebscraper
+from classes.JumboWebscraper import JumboWebscraper
+from classes.DiscoWebscraper import DiscoWebscraper
 from parameters import URLS_KEYWORDS, EMAIL_SUBJECT, USERNAME, PASSWORD, TO_ADDRESS, TIMEOUT
 
 class Webscraper(object):
+
+    COLORS = {
+        'HEADER': '\033[95m',
+        'OKBLUE': '\033[94m',
+        'OKCYAN': '\033[96m',
+        'OKGREEN': '\033[92m',
+        'WARNING': '\033[93m',
+        'FAIL': '\033[91m',
+        'ENDC': '\033[0m',
+        'BOLD': '\033[1m',
+        'UNDERLINE': '\033[4m',
+    }
 
     def __init__(self, urlsKeywordsDict, emailSubject, username, password, toAddress, timeout):
         self.urlsKeywordsDict = urlsKeywordsDict
@@ -26,6 +40,10 @@ class Webscraper(object):
                                            keywords=self.urlsKeywordsDict['Cetrogar']['keywords']),
             'Sony': SonyWebscraper(url=self.urlsKeywordsDict['Sony']['URL'],
                                            keywords=self.urlsKeywordsDict['Sony']['keywords']),
+            'Jumbo': JumboWebscraper(url=self.urlsKeywordsDict['Jumbo']['URL'],
+                                           keywords=self.urlsKeywordsDict['Jumbo']['keywords']),
+            'Disco': DiscoWebscraper(url=self.urlsKeywordsDict['Disco']['URL'],
+                                           keywords=self.urlsKeywordsDict['Disco']['keywords']),
         }
     
     def __repr__(self):
@@ -34,24 +52,30 @@ class Webscraper(object):
     def __str__(self):
         return f'{self.__class__.__name__}: {self.urlsKeywordsDict}'
     
-    def getAllProducts(self):
+    def getAllProducts(self, verbose=True):
         """Returns a dictionary of product: price for every product in every webpage
         """
 
-        return {webpage: self.webpageToObject[webpage].getProducts() for webpage in self.webpageToObject}
+        products_by_webpage = {}
+        for webpage in self.webpageToObject:
+            if verbose:
+                print(f'Scraping {webpage}...')
+            products_by_webpage[webpage] = self.webpageToObject[webpage].getProducts()
+
+        return products_by_webpage
     
     # Complete process
     def checkNewProducts(self):
         """Verifies if there is a new product for every webpage and sends an email when it occurs
         """
 
-        initial_products_prices = self.getAllProducts()
+        initial_products_prices = self.getAllProducts(verbose=False)
         send_email_flag = True
         while True:
             now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
             try:
-                new_products_prices = self.getAllProducts()
+                new_products_prices = self.getAllProducts(verbose=True)
                 for webpage in new_products_prices:
                     for product in new_products_prices[webpage]:
                         # Send email when there is a new product or if a product that did not have stock has been restocked
@@ -66,11 +90,11 @@ class Webscraper(object):
                 
                 if send_email_flag:
                     self.sendEmail(productsPrices=new_products_prices)
-                    print(f'NEW PRODUCTS ALERT! E-mail has been sent. Time: {now}')
+                    print(f'{self.COLORS["OKGREEN"]}NEW PRODUCTS ALERT!{self.COLORS["ENDC"]} E-mail has been sent. Time: {now}')
                     send_email_flag = False
                     initial_products_prices = new_products_prices
                 else:
-                    print(f'Nothing new. Time: {now}')
+                    print(f'{self.COLORS["WARNING"]}Nothing new{self.COLORS["ENDC"]}. Time: {now}')
             except Exception as e:
                 print(f"Error: '{e}'. Time: {now}")
                 continue
