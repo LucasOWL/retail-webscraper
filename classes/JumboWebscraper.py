@@ -1,5 +1,4 @@
 from classes.BaseWebscraper import BaseWebscraper
-from selenium.webdriver.common.keys import Keys
 import requests
 import json
 
