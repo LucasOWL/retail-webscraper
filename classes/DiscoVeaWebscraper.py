@@ -1,7 +1,7 @@
 import time
 from classes.BaseWebscraper import BaseWebscraper
 
-class DiscoWebscraper(BaseWebscraper):
+class DiscoVeaWebscraper(BaseWebscraper):
 
     def __init__(self, url, keywords, name='Disco', products_prices={}):
         self.name = name

@@ -8,7 +8,9 @@ from classes.FravegaWebscraper import FravegaWebscraper
 from classes.CetrogarWebscraper import CetrogarWebscraper
 from classes.SonyWebscraper import SonyWebscraper
 from classes.JumboWebscraper import JumboWebscraper
-from classes.DiscoWebscraper import DiscoWebscraper
+from classes.DiscoVeaWebscraper import DiscoVeaWebscraper
+from classes.FalabellaWebscraper import FalabellaWebscraper
+from classes.WalmartWebscraper import WalmartWebscraper
 from parameters import URLS_KEYWORDS, EMAIL_SUBJECT, USERNAME, PASSWORD, TO_ADDRESS, TIMEOUT
 
 class Webscraper(object):
@@ -34,16 +36,38 @@ class Webscraper(object):
         self.timeout = timeout
     
         self.webpageToObject = {
-            'Frávega': FravegaWebscraper(url=self.urlsKeywordsDict['Frávega']['URL'],
-                                         keywords=self.urlsKeywordsDict['Frávega']['keywords']),
-            'Cetrogar': CetrogarWebscraper(url=self.urlsKeywordsDict['Cetrogar']['URL'],
-                                           keywords=self.urlsKeywordsDict['Cetrogar']['keywords']),
-            'Sony': SonyWebscraper(url=self.urlsKeywordsDict['Sony']['URL'],
-                                           keywords=self.urlsKeywordsDict['Sony']['keywords']),
-            'Jumbo': JumboWebscraper(url=self.urlsKeywordsDict['Jumbo']['URL'],
-                                           keywords=self.urlsKeywordsDict['Jumbo']['keywords']),
-            'Disco': DiscoWebscraper(url=self.urlsKeywordsDict['Disco']['URL'],
-                                           keywords=self.urlsKeywordsDict['Disco']['keywords']),
+            'Frávega': FravegaWebscraper(
+                url=self.getURL('Frávega'),
+                keywords=self.getKeywords('Frávega'),
+                name='Frávega'),
+            'Cetrogar': CetrogarWebscraper(
+                url=self.getURL('Cetrogar'),
+                keywords=self.getKeywords('Cetrogar'),
+                name='Cetrogar'),
+            'Sony': SonyWebscraper(
+                url=self.getURL('Sony'),
+                keywords=self.getKeywords('Sony'),
+                name='Sony'),
+            'Jumbo': JumboWebscraper(
+                url=self.getURL('Jumbo'),
+                keywords=self.getKeywords('Jumbo'),
+                name='Jumbo'),
+            'Disco': DiscoVeaWebscraper(
+                url=self.getURL('Disco'),
+                keywords=self.getKeywords('Disco'),
+                name='Disco'),
+            'Vea Digital': DiscoVeaWebscraper(
+                url=self.getURL('Vea Digital'),
+                keywords=self.getKeywords('Vea Digital'),
+                name='Vea Digital'),
+            'Falabella': FalabellaWebscraper(
+                url=self.getURL('Falabella'),
+                keywords=self.getKeywords('Falabella'),
+                name='Falabella'),
+            'Walmart': WalmartWebscraper(
+                url=self.getURL('Walmart'),
+                keywords=self.getKeywords('Walmart'),
+                name='Walmart'),
         }
     
     def __repr__(self):
@@ -52,15 +76,34 @@ class Webscraper(object):
     def __str__(self):
         return f'{self.__class__.__name__}: {self.urlsKeywordsDict}'
     
+    def getURL(self, webpage):
+        """Returns URL from parameters file
+        """
+
+        try:
+            return self.urlsKeywordsDict[webpage]['URL']
+        except:
+            return None
+    
+    def getKeywords(self, webpage):
+        """Returns keywords from parameters file
+        """
+        
+        try:
+            return self.urlsKeywordsDict[webpage]['keywords']
+        except:
+            return None
+    
     def getAllProducts(self, verbose=True):
         """Returns a dictionary of product: price for every product in every webpage
         """
 
         products_by_webpage = {}
         for webpage in self.webpageToObject:
-            if verbose:
-                print(f'Scraping {webpage}...')
-            products_by_webpage[webpage] = self.webpageToObject[webpage].getProducts()
+            if self.getURL(webpage) is not None:
+                if verbose:
+                    print(f'Scraping {webpage}...')
+                products_by_webpage[webpage] = self.webpageToObject[webpage].getProducts()
 
         return products_by_webpage
     

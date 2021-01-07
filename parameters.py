@@ -20,6 +20,15 @@ URLS_KEYWORDS = {
         'Disco': {
             'URL': 'https://www.disco.com.ar/Comprar/Home.aspx#_atCategory=false&_atGrilla=true&_query=ps5',
             'keywords': None},
+        'Vea Digital': {
+            'URL': 'https://www.veadigital.com.ar/Comprar/Home.aspx#_atCategory=false&_atGrilla=true&_query=ps5',
+            'keywords': None},
+        'Falabella': {
+            'URL': 'https://www.falabella.com.ar/falabella-ar/category/cat10166/Mundo-gamer?facetSelected=true&f.product.brandName=sony&isPLP=1',
+            'keywords': keywords},
+        'Walmart': {
+            'URL': 'https://www.walmart.com.ar/buscar?text=ps5',
+            'keywords': keywords},
     }
 EMAIL_SUBJECT = 'Hay nuevos productos de PS5'
 USERNAME = username
