@@ -1,4 +1,6 @@
 from selenium import webdriver
+from urllib.request import urlopen
+from bs4 import BeautifulSoup
 from parameters import CHROMEDRIVER_PATH
 
 class BaseWebscraper(object):
@@ -28,3 +30,13 @@ class BaseWebscraper(object):
         driver = webdriver.Chrome(CHROMEDRIVER_PATH, options=driver_options)
 
         return driver
+    
+    def getPageSoup(self, url):
+        """Returns webpage with BeautifulSoup
+        """
+
+        with urlopen(url) as uClient:
+            page_html = uClient.read()
+            page_soup = BeautifulSoup(page_html, 'html.parser')
+
+        return page_soup

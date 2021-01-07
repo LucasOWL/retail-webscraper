@@ -29,6 +29,12 @@ URLS_KEYWORDS = {
         'Walmart': {
             'URL': 'https://www.walmart.com.ar/buscar?text=ps5',
             'keywords': keywords},
+        'Garbarino': {
+            'URL': 'https://www.garbarino.com/q/ps5/srch?q=ps5',
+            'keywords': None},
+        'Musimundo': {
+            'URL': 'https://www.musimundo.com/mi-musimundo/search?text=ps5',
+            'keywords': keywords},
     }
 EMAIL_SUBJECT = 'Hay nuevos productos de PS5'
 USERNAME = username

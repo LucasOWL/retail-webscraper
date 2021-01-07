@@ -3,6 +3,7 @@ from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 import time
 from datetime import datetime
+from colorama import init, Fore, Style
 from classes.BaseWebscraper import BaseWebscraper
 from classes.FravegaWebscraper import FravegaWebscraper
 from classes.CetrogarWebscraper import CetrogarWebscraper
@@ -11,21 +12,11 @@ from classes.JumboWebscraper import JumboWebscraper
 from classes.DiscoVeaWebscraper import DiscoVeaWebscraper
 from classes.FalabellaWebscraper import FalabellaWebscraper
 from classes.WalmartWebscraper import WalmartWebscraper
+from classes.GarbarinoWebscraper import GarbarinoWebscraper
+from classes.MusimundoWebscraper import MusimundoWebscraper
 from parameters import URLS_KEYWORDS, EMAIL_SUBJECT, USERNAME, PASSWORD, TO_ADDRESS, TIMEOUT
 
 class Webscraper(object):
-
-    COLORS = {
-        'HEADER': '\033[95m',
-        'OKBLUE': '\033[94m',
-        'OKCYAN': '\033[96m',
-        'OKGREEN': '\033[92m',
-        'WARNING': '\033[93m',
-        'FAIL': '\033[91m',
-        'ENDC': '\033[0m',
-        'BOLD': '\033[1m',
-        'UNDERLINE': '\033[4m',
-    }
 
     def __init__(self, urlsKeywordsDict, emailSubject, username, password, toAddress, timeout):
         self.urlsKeywordsDict = urlsKeywordsDict
@@ -36,38 +27,16 @@ class Webscraper(object):
         self.timeout = timeout
     
         self.webpageToObject = {
-            'Frávega': FravegaWebscraper(
-                url=self.getURL('Frávega'),
-                keywords=self.getKeywords('Frávega'),
-                name='Frávega'),
-            'Cetrogar': CetrogarWebscraper(
-                url=self.getURL('Cetrogar'),
-                keywords=self.getKeywords('Cetrogar'),
-                name='Cetrogar'),
-            'Sony': SonyWebscraper(
-                url=self.getURL('Sony'),
-                keywords=self.getKeywords('Sony'),
-                name='Sony'),
-            'Jumbo': JumboWebscraper(
-                url=self.getURL('Jumbo'),
-                keywords=self.getKeywords('Jumbo'),
-                name='Jumbo'),
-            'Disco': DiscoVeaWebscraper(
-                url=self.getURL('Disco'),
-                keywords=self.getKeywords('Disco'),
-                name='Disco'),
-            'Vea Digital': DiscoVeaWebscraper(
-                url=self.getURL('Vea Digital'),
-                keywords=self.getKeywords('Vea Digital'),
-                name='Vea Digital'),
-            'Falabella': FalabellaWebscraper(
-                url=self.getURL('Falabella'),
-                keywords=self.getKeywords('Falabella'),
-                name='Falabella'),
-            'Walmart': WalmartWebscraper(
-                url=self.getURL('Walmart'),
-                keywords=self.getKeywords('Walmart'),
-                name='Walmart'),
+            'Frávega': FravegaWebscraper(**self.getURLKeywords('Frávega')),
+            'Cetrogar': CetrogarWebscraper(**self.getURLKeywords('Cetrogar')),
+            'Sony': SonyWebscraper(**self.getURLKeywords('Sony')),
+            'Jumbo': JumboWebscraper(**self.getURLKeywords('Jumbo')),
+            'Disco': DiscoVeaWebscraper(**self.getURLKeywords('Disco')),
+            'Vea Digital': DiscoVeaWebscraper(**self.getURLKeywords('Vea Digital')),
+            'Falabella': FalabellaWebscraper(**self.getURLKeywords('Falabella')),
+            'Walmart': WalmartWebscraper(**self.getURLKeywords('Walmart')),
+            'Garbarino': GarbarinoWebscraper(**self.getURLKeywords('Garbarino')),
+            'Musimundo': MusimundoWebscraper(**self.getURLKeywords('Musimundo')),
         }
     
     def __repr__(self):
@@ -94,6 +63,12 @@ class Webscraper(object):
         except:
             return None
     
+    def getURLKeywords(self, webpage):
+        """Returns dictionary with url, keywords and name for webpage constructor
+        """
+
+        return {'url': self.getURL(webpage), 'keywords': self.getKeywords(webpage), 'name': webpage}
+    
     def getAllProducts(self, verbose=True):
         """Returns a dictionary of product: price for every product in every webpage
         """
@@ -111,6 +86,8 @@ class Webscraper(object):
     def checkNewProducts(self):
         """Verifies if there is a new product for every webpage and sends an email when it occurs
         """
+        
+        init()  # Initiates colorama
 
         initial_products_prices = self.getAllProducts(verbose=False)
         send_email_flag = True
@@ -118,33 +95,33 @@ class Webscraper(object):
             now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
             try:
+                # Scrap webpages
                 new_products_prices = self.getAllProducts(verbose=True)
+                new_products = {webpage: [] for webpage in new_products_prices}
                 for webpage in new_products_prices:
                     for product in new_products_prices[webpage]:
-                        # Send email when there is a new product or if a product that did not have stock has been restocked
+                        # Send email when there is a new product or if a product has been restocked
                         no_stock_status = BaseWebscraper.NO_STOCK_STATUS
                         product_restocked_flag = initial_products_prices[webpage][product] == no_stock_status and \
                                                  new_products_prices[webpage][product] != no_stock_status 
                         if product != '' and (product not in initial_products_prices[webpage] or product_restocked_flag):
+                            new_products[webpage] = new_products[webpage].append(product)
                             send_email_flag = True
-                            break
-                    if send_email_flag:
-                        break
-                
+
                 if send_email_flag:
-                    self.sendEmail(productsPrices=new_products_prices)
-                    print(f'{self.COLORS["OKGREEN"]}NEW PRODUCTS ALERT!{self.COLORS["ENDC"]} E-mail has been sent. Time: {now}')
+                    self.sendEmail(productsPrices=new_products_prices, newProducts=new_products)
+                    print(f'{Fore.GREEN}NEW PRODUCTS ALERT!{Style.RESET_ALL} E-mail has been sent. Time: {now}')
                     send_email_flag = False
                     initial_products_prices = new_products_prices
                 else:
-                    print(f'{self.COLORS["WARNING"]}Nothing new{self.COLORS["ENDC"]}. Time: {now}')
+                    print(f'{Fore.YELLOW}NOTHING NEW{Style.RESET_ALL}. Time: {now}')
             except Exception as e:
                 print(f"Error: '{e}'. Time: {now}")
                 continue
             
             time.sleep(self.timeout * 60)
 
-    def sendEmail(self, productsPrices):
+    def sendEmail(self, productsPrices, newProducts):
         # Start e-mail server
         server = smtplib.SMTP('smtp.gmail.com', 587)
         server.ehlo()
@@ -160,9 +137,12 @@ class Webscraper(object):
         message['To'] = self.toAddress
         body = ''
         for webpage in productsPrices:
+            new_products = newProducts[webpage]
             body += f'{webpage.upper()}:\n'
             for product in sorted(productsPrices[webpage]):
-                body += f'- {product}: {productsPrices[webpage][product]}\n'
+                new = '(NUEVO) ' if product in new_products else ''
+                price = productsPrices[webpage][product]
+                body += f'- {new}{product}: {price}\n'
             body += f"\nURL: {self.urlsKeywordsDict[webpage]['URL']}\n\n\n"
         body = MIMEText(body.encode('utf-8'), 'plain', _charset='utf-8')
         message.attach(body)

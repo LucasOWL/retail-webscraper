@@ -1,5 +1,3 @@
-from urllib.request import urlopen
-from bs4 import BeautifulSoup
 from classes.BaseWebscraper import BaseWebscraper
 
 class FravegaWebscraper(BaseWebscraper):
@@ -13,10 +11,7 @@ class FravegaWebscraper(BaseWebscraper):
         """Returns a dictionary of product: price for every product listed on webpage
         """
         
-        uClient = urlopen(self.url)
-        page_html = uClient.read()
-        page_soup = BeautifulSoup(page_html, 'html.parser')
-        
+        page_soup = self.getPageSoup(self.url)
         # Find products and prices
         items_grid = page_soup.find('ul', {'name': 'itemsGrid'})
         if items_grid is not None:
@@ -24,7 +19,6 @@ class FravegaWebscraper(BaseWebscraper):
             self.products_prices = {
                 self.getProduct(product): self.getFinalPrice(product) 
                     for product in products_li if self.keywords is None or any(kw.lower() in self.getProduct(product).lower() for kw in self.keywords)}
-        uClient.close()
 
         return self.products_prices
 
