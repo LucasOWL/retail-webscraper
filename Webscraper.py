@@ -93,6 +93,7 @@ class Webscraper(object):
         send_email_flag = True
         while True:
             now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+            no_stock_status = BaseWebscraper.NO_STOCK_STATUS
 
             try:
                 # Scrap webpages
@@ -100,13 +101,18 @@ class Webscraper(object):
                 new_products = {webpage: [] for webpage in new_products_prices}
                 for webpage in new_products_prices:
                     for product in new_products_prices[webpage]:
-                        # Send email when there is a new product or if a product has been restocked
-                        no_stock_status = BaseWebscraper.NO_STOCK_STATUS
-                        product_restocked_flag = initial_products_prices[webpage][product] == no_stock_status and \
-                                                 new_products_prices[webpage][product] != no_stock_status 
-                        if product != '' and (product not in initial_products_prices[webpage] or product_restocked_flag):
-                            new_products[webpage] = new_products[webpage].append(product)
-                            send_email_flag = True
+                        if product is not None and product != '':
+                            is_new_product = product not in initial_products_prices[webpage]
+                            product_restocked_flag = False
+                            if not is_new_product:
+                                product_restocked_flag = initial_products_prices[webpage][product] == no_stock_status and \
+                                                         new_products_prices[webpage][product] != no_stock_status 
+                            # Send email when there is a new product or if a product has been restocked
+                            if is_new_product or product_restocked_flag:
+                                webpage_new_products_list = new_products[webpage]
+                                webpage_new_products_list.append(product)
+                                new_products[webpage] = webpage_new_products_list
+                                send_email_flag = True
 
                 if send_email_flag:
                     self.sendEmail(productsPrices=new_products_prices, newProducts=new_products)
