@@ -198,7 +198,7 @@ class Webscraper(object):
         return f'<li>{new_product_html}{product}: {price_html}</li>'
     
     def urlHTML(self, url):
-        return f'<p>URL: <a href="url">{url}</a></p>'
+        return f'<p>URL: <a href="{url}" target="_blank">{url}</a></p>'
 
 
 # Start
