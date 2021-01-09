@@ -38,6 +38,7 @@ class Webscraper(object):
             'Garbarino': GarbarinoWebscraper(**self.getURLKeywords('Garbarino')),
             'Musimundo': MusimundoWebscraper(**self.getURLKeywords('Musimundo')),
         }
+        self.NO_STOCK_STATUS = BaseWebscraper.NO_STOCK_STATUS
     
     def __repr__(self):
         return f'{self.__class__.__name__}({self.urlsKeywordsDict})'
@@ -69,6 +70,9 @@ class Webscraper(object):
 
         return {'url': self.getURL(webpage), 'keywords': self.getKeywords(webpage), 'name': webpage}
     
+    def getCurrentTime(self):
+        return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+    
     def getAllProducts(self, verbose=True):
         """Returns a dictionary of product: price for every product in every webpage
         """
@@ -88,26 +92,28 @@ class Webscraper(object):
         """
         
         init()  # Initiates colorama
+        print(f'{Fore.BLUE}STARTING WEBSCRAPER!{Style.RESET_ALL} Time: {self.getCurrentTime()}')
 
         initial_products_prices = self.getAllProducts(verbose=False)
         send_email_flag = True
+        alerts = 0
+        last_alert = ''
+        n = 0
         while True:
-            now = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
-            no_stock_status = BaseWebscraper.NO_STOCK_STATUS
-
+            now = self.getCurrentTime()
             try:
                 # Scrap webpages
                 new_products_prices = self.getAllProducts(verbose=True)
                 new_products = {webpage: [] for webpage in new_products_prices}
+                # Send email when there is a new product or if a product has been restocked
                 for webpage in new_products_prices:
                     for product in new_products_prices[webpage]:
                         if product is not None and product != '':
                             is_new_product = product not in initial_products_prices[webpage]
                             product_restocked_flag = False
                             if not is_new_product:
-                                product_restocked_flag = initial_products_prices[webpage][product] == no_stock_status and \
-                                                         new_products_prices[webpage][product] != no_stock_status 
-                            # Send email when there is a new product or if a product has been restocked
+                                product_restocked_flag = initial_products_prices[webpage][product] == self.NO_STOCK_STATUS and \
+                                                         new_products_prices[webpage][product] != self.NO_STOCK_STATUS 
                             if is_new_product or product_restocked_flag:
                                 webpage_new_products_list = new_products[webpage]
                                 webpage_new_products_list.append(product)
@@ -116,15 +122,21 @@ class Webscraper(object):
 
                 if send_email_flag:
                     self.sendEmail(productsPrices=new_products_prices, newProducts=new_products)
-                    print(f'{Fore.GREEN}NEW PRODUCTS ALERT!{Style.RESET_ALL} E-mail has been sent. Time: {now}')
+                    if n == 0:
+                        print(f'{Fore.YELLOW}FIRST SCRAPING{Style.RESET_ALL} E-mail has been sent. Time: {now}')
+                    else:
+                        print(f'{Fore.GREEN}NEW PRODUCTS ALERT!{Style.RESET_ALL} E-mail has been sent. Time: {now}')
+                        alerts += 1
+                        last_alert = self.getCurrentTime()
                     send_email_flag = False
                     initial_products_prices = new_products_prices
                 else:
-                    print(f'{Fore.YELLOW}NOTHING NEW{Style.RESET_ALL}. Time: {now}')
+                    print(f'{Fore.YELLOW}NOTHING NEW{Style.RESET_ALL}. Time: {now}. Alerts: {alerts}{f" (last: {last_alert})" if alerts > 0 else ""}')
             except Exception as e:
                 print(f"Error: '{e}'. Time: {now}")
                 continue
             
+            n += 1
             time.sleep(self.timeout * 60)
 
     def sendEmail(self, productsPrices, newProducts):
@@ -141,21 +153,52 @@ class Webscraper(object):
         message['Subject'] = self.emailSubject
         message['From'] = 'Webscraping Bot'
         message['To'] = self.toAddress
-        body = ''
-        for webpage in productsPrices:
-            new_products = newProducts[webpage]
-            body += f'{webpage.upper()}:\n'
-            for product in sorted(productsPrices[webpage]):
-                new = '(NUEVO) ' if product in new_products else ''
-                price = productsPrices[webpage][product]
-                body += f'- {new}{product}: {price}\n'
-            body += f"\nURL: {self.urlsKeywordsDict[webpage]['URL']}\n\n\n"
-        body = MIMEText(body.encode('utf-8'), 'plain', _charset='utf-8')
+        body = self.setupEmailHTML(productsPrices, newProducts)
+        body = MIMEText(body.encode('utf-8'), 'html', _charset='utf-8')
         message.attach(body)
 
         server.sendmail(from_addr=self.username, to_addrs=self.toAddress, msg=message.as_string())
         
         server.quit()
+    
+    def setupEmailHTML(self, productsPrices, newProducts):
+        HTML_HEAD = """<html>
+            <head>
+            <style>
+                h3 { font-size: 1.3em }
+            </style>
+            </head>
+            <body>"""
+        HTML_END = """</body>
+            </html>"""
+        
+        html = HTML_HEAD
+        for webpage in productsPrices:
+            html += self.webpageHTML(webpage)
+            products_dict = productsPrices[webpage]
+            if len(products_dict) > 0:
+                for product in products_dict:
+                    price = products_dict[product]
+                    html += self.productHTML(product, price, newProducts[webpage])
+            html += self.urlHTML(self.urlsKeywordsDict[webpage]['URL'])
+            html += '<br>'
+        html += HTML_END
+
+        return html
+
+    def webpageHTML(self, webpage):
+        return f'<h3>{webpage}</h3>'
+        
+    def productHTML(self, product, price, newProductsList):
+        price_html = price
+        if price == self.NO_STOCK_STATUS:
+            price_html = f'<span style="color: red";>{price}</span>'
+        new_product_html = '<span style="color: green; font-weight: bold">(NUEVO) </span>' \
+                                if product in newProductsList else ''
+        return f'<li>{new_product_html}{product}: {price_html}</li>'
+    
+    def urlHTML(self, url):
+        return f'<p>URL: <a href="url">{url}</a></p>'
 
 
 # Start
