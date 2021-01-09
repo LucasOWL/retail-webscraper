@@ -177,8 +177,7 @@ class Webscraper(object):
             html += self.webpageHTML(webpage)
             products_dict = productsPrices[webpage]
             if len(products_dict) > 0:
-                for product in products_dict:
-                    price = products_dict[product]
+                for product, price in products_dict.items():
                     html += self.productHTML(product, price, newProducts[webpage])
             html += self.urlHTML(self.urlsKeywordsDict[webpage]['URL'])
             html += '<br>'
