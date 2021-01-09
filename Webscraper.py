@@ -152,7 +152,7 @@ class Webscraper(object):
         message = MIMEMultipart('alternative')
         message['Subject'] = self.emailSubject
         message['From'] = 'Webscraping Bot'
-        message['To'] = self.toAddress
+        message['To'] = (', ').join(self.toAddress) if isinstance(self.toAddress, list) else self.toAddress
         body = self.setupEmailHTML(productsPrices, newProducts)
         body = MIMEText(body.encode('utf-8'), 'html', _charset='utf-8')
         message.attach(body)
