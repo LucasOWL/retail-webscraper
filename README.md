@@ -8,6 +8,7 @@ python -m pip install --user virtualenv
 python -m venv env
 ```
 Activate virtual environment:
+
 Windows:
 ```bash
 .\env\Scripts\activate
@@ -30,6 +31,7 @@ Modify parameters.py and fill secrets.py with credentials. Password must be a Gm
 
 ## Execution
 Step into installation folder and activate virtual environment:
+
 Windows:
 ```bash
 .\env\Scripts\activate
