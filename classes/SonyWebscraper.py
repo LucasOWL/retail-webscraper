@@ -9,9 +9,9 @@ class SonyWebscraper(BaseWebscraper):
 
     API_BASE_URL = 'https://store.sony.com.ar/api/catalog_system/pub/products/variations/'
     
-    def __init__(self, url, keywords, name='Sony', products_prices={}):
+    def __init__(self, url, keywords, name='Sony'):
         self.name = name
-        self.products_prices = products_prices
+        self.products_prices = dict()
         super().__init__(url, keywords)
         
     def getItemsIds(self, waitingTime=5):

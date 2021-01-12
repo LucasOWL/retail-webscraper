@@ -2,9 +2,9 @@ from classes.BaseWebscraper import BaseWebscraper
 
 class MusimundoWebscraper(BaseWebscraper):
 
-    def __init__(self, url, keywords, name='Musimundo', products_prices={}):
+    def __init__(self, url, keywords, name='Musimundo'):
         self.name = name
-        self.products_prices = products_prices
+        self.products_prices = dict()
         super().__init__(url, keywords)
 
     def getAPIUrl(self, search, maxResults=100):

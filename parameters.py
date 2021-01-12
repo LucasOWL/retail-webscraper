@@ -35,6 +35,9 @@ URLS_KEYWORDS = {
         'Musimundo': {
             'URL': 'https://www.musimundo.com/mi-musimundo/search?text=ps5',
             'keywords': keywords},
+        'Compumundo': {
+            'URL': 'https://www.compumundo.com.ar/q/ps5/srch?q=ps5',
+            'keywords': None},
     }
 EMAIL_SUBJECT = 'Hay nuevos productos de PS5'
 USERNAME = username

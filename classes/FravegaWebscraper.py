@@ -2,9 +2,9 @@ from classes.BaseWebscraper import BaseWebscraper
 
 class FravegaWebscraper(BaseWebscraper):
 
-    def __init__(self, url, keywords, name='Frávega', products_prices={}):
+    def __init__(self, url, keywords, name='Frávega'):
         self.name = name
-        self.products_prices = products_prices
+        self.products_prices = dict()
         super().__init__(url, keywords)
     
     def getProducts(self):

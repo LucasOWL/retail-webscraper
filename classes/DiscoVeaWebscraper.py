@@ -5,9 +5,9 @@ from classes.BaseWebscraper import BaseWebscraper
 
 class DiscoVeaWebscraper(BaseWebscraper):
 
-    def __init__(self, url, keywords, name='Disco', products_prices={}):
+    def __init__(self, url, keywords, name='Disco'):
         self.name = name
-        self.products_prices = products_prices
+        self.products_prices = dict()
         super().__init__(url, keywords)
     
     def getProducts(self, waitingTime=2):

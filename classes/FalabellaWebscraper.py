@@ -7,9 +7,9 @@ from classes.BaseWebscraper import BaseWebscraper
 
 class FalabellaWebscraper(BaseWebscraper):
 
-    def __init__(self, url, keywords, name='Falabella', products_prices={}):
+    def __init__(self, url, keywords, name='Falabella'):
         self.name = name
-        self.products_prices = products_prices
+        self.products_prices = dict()
         super().__init__(url, keywords)
     
     def getProducts(self, waitingTime=2):

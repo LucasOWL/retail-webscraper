@@ -11,7 +11,7 @@ from classes.CetrogarWebscraper import CetrogarWebscraper
 from classes.DiscoVeaWebscraper import DiscoVeaWebscraper
 from classes.FalabellaWebscraper import FalabellaWebscraper
 from classes.FravegaWebscraper import FravegaWebscraper
-from classes.GarbarinoWebscraper import GarbarinoWebscraper
+from classes.GarbarinoCompumundoWebscraper import GarbarinoCompumundoWebscraper
 from classes.JumboWebscraper import JumboWebscraper
 from classes.MusimundoWebscraper import MusimundoWebscraper
 from classes.SonyWebscraper import SonyWebscraper
@@ -21,6 +21,8 @@ from parameters import (EMAIL_SUBJECT, PASSWORD, TIMEOUT, TO_ADDRESS,
 
 
 class Webscraper(object):
+
+    NO_STOCK_STATUS = BaseWebscraper.NO_STOCK_STATUS
 
     def __init__(self, urlsKeywordsDict, emailSubject, username, password, toAddress, timeout):
         self.urlsKeywordsDict = urlsKeywordsDict
@@ -39,10 +41,10 @@ class Webscraper(object):
             'Vea Digital': DiscoVeaWebscraper(**self.getURLKeywords('Vea Digital')),
             'Falabella': FalabellaWebscraper(**self.getURLKeywords('Falabella')),
             'Walmart': WalmartWebscraper(**self.getURLKeywords('Walmart')),
-            'Garbarino': GarbarinoWebscraper(**self.getURLKeywords('Garbarino')),
+            'Garbarino': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Garbarino')),
             'Musimundo': MusimundoWebscraper(**self.getURLKeywords('Musimundo')),
+            'Compumundo': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Compumundo')),
         }
-        self.NO_STOCK_STATUS = BaseWebscraper.NO_STOCK_STATUS
     
     def __repr__(self):
         return f'{self.__class__.__name__}({self.urlsKeywordsDict})'
@@ -121,11 +123,11 @@ class Webscraper(object):
                     for product in new_products_prices[webpage]:
                         if product is not None and product != '':
                             is_new_product = product not in initial_products_prices[webpage]
-                            product_restocked_flag = False
+                            was_product_restocked = False
                             if not is_new_product:
-                                product_restocked_flag = initial_products_prices[webpage][product] == self.NO_STOCK_STATUS and \
+                                was_product_restocked = initial_products_prices[webpage][product] == self.NO_STOCK_STATUS and \
                                                          new_products_prices[webpage][product] != self.NO_STOCK_STATUS 
-                            if is_new_product or product_restocked_flag:
+                            if is_new_product or was_product_restocked:
                                 webpage_new_products_list = new_products[webpage]
                                 webpage_new_products_list.append(product)
                                 new_products[webpage] = webpage_new_products_list
