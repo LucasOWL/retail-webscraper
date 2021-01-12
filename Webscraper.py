@@ -1,20 +1,24 @@
 import smtplib
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
 import time
 from datetime import datetime
-from colorama import init, Fore, Style
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+
+from colorama import Fore, Style, init
+
 from classes.BaseWebscraper import BaseWebscraper
-from classes.FravegaWebscraper import FravegaWebscraper
 from classes.CetrogarWebscraper import CetrogarWebscraper
-from classes.SonyWebscraper import SonyWebscraper
-from classes.JumboWebscraper import JumboWebscraper
 from classes.DiscoVeaWebscraper import DiscoVeaWebscraper
 from classes.FalabellaWebscraper import FalabellaWebscraper
-from classes.WalmartWebscraper import WalmartWebscraper
+from classes.FravegaWebscraper import FravegaWebscraper
 from classes.GarbarinoWebscraper import GarbarinoWebscraper
+from classes.JumboWebscraper import JumboWebscraper
 from classes.MusimundoWebscraper import MusimundoWebscraper
-from parameters import URLS_KEYWORDS, EMAIL_SUBJECT, USERNAME, PASSWORD, TO_ADDRESS, TIMEOUT
+from classes.SonyWebscraper import SonyWebscraper
+from classes.WalmartWebscraper import WalmartWebscraper
+from parameters import (EMAIL_SUBJECT, PASSWORD, TIMEOUT, TO_ADDRESS,
+                        URLS_KEYWORDS, USERNAME)
+
 
 class Webscraper(object):
 
@@ -73,7 +77,7 @@ class Webscraper(object):
     def getCurrentTime(self):
         return datetime.now().strftime("%d/%m/%Y %H:%M:%S")
     
-    def getAllProducts(self, verbose=True):
+    def getAllProducts(self, verbose=True, printTime=False):
         """Returns a dictionary of product: price for every product in every webpage
         """
 
@@ -82,7 +86,14 @@ class Webscraper(object):
             if self.getURL(webpage) is not None:
                 if verbose:
                     print(f'Scraping {webpage}...')
+                if printTime:
+                    initial_time = time.time()
+
                 products_by_webpage[webpage] = self.webpageToObject[webpage].getProducts()
+                
+                if printTime:
+                    scraping_time = time.time() - initial_time
+                    print(f'Finished scraping {webpage} ({scraping_time:.02f}s)')
 
         return products_by_webpage
     
@@ -94,7 +105,7 @@ class Webscraper(object):
         init()  # Initiates colorama
         print(f'{Fore.BLUE}STARTING WEBSCRAPER!{Style.RESET_ALL} Time: {self.getCurrentTime()}')
 
-        initial_products_prices = self.getAllProducts(verbose=False)
+        initial_products_prices = self.getAllProducts(verbose=False, printTime=False)
         send_email_flag = True
         alerts = 0
         last_alert = ''
@@ -103,7 +114,7 @@ class Webscraper(object):
             now = self.getCurrentTime()
             try:
                 # Scrap webpages
-                new_products_prices = self.getAllProducts(verbose=True)
+                new_products_prices = self.getAllProducts(verbose=True, printTime=False)
                 new_products = {webpage: [] for webpage in new_products_prices}
                 # Send email when there is a new product or if a product has been restocked
                 for webpage in new_products_prices:

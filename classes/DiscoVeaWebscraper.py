@@ -1,5 +1,7 @@
 import time
+
 from classes.BaseWebscraper import BaseWebscraper
+
 
 class DiscoVeaWebscraper(BaseWebscraper):
 

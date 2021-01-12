@@ -1,8 +1,9 @@
 import time
-from classes.BaseWebscraper import BaseWebscraper
+
 from selenium.webdriver.common.keys import Keys
-import requests
-import json
+
+from classes.BaseWebscraper import BaseWebscraper
+
 
 class SonyWebscraper(BaseWebscraper):
 
@@ -46,16 +47,17 @@ class SonyWebscraper(BaseWebscraper):
         """
 
         items_ids = self.getItemsIds(waitingTime=5)
-        for item_id in items_ids:
-            item_api_url = f'{self.API_BASE_URL}{item_id}'
-            content = requests.get(item_api_url)
-            item_info = json.loads(content.text)
-            product = self.getProduct(item_info)
+        api_urls = [f'{self.API_BASE_URL}{item_id}' for item_id in items_ids]
+        items_info = self.multiThreadDownloadContent(api_urls)
+        
+        for item_info in items_info:
+            item_info_dict = item_info.result()
+            product = self.getProduct(item_info_dict)
             if self.keywords is None or any(kw.lower() in product.lower() for kw in self.keywords):
-                self.products_prices.update({product: self.getFinalPrice(item_info)})
+                self.products_prices.update({product: self.getFinalPrice(item_info_dict)})
         
         return self.products_prices
-
+    
     def getProduct(self, itemInfo):
         return itemInfo['name'].strip()
 

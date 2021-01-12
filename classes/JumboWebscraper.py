@@ -1,6 +1,5 @@
 from classes.BaseWebscraper import BaseWebscraper
-import requests
-import json
+
 
 class JumboWebscraper(BaseWebscraper):
 
@@ -23,8 +22,7 @@ class JumboWebscraper(BaseWebscraper):
         from_index = fromIndex
         to_index = toIndex
         api_search_url = self.getAPIUrl(search=search_terms, fromIndex=from_index, toIndex=to_index)
-        content = requests.get(api_search_url)
-        items_info = json.loads(content.text)
+        items_info = self.downloadContent(api_search_url)
 
         if len(items_info) > 0:
             for item in items_info:

@@ -1,6 +1,9 @@
 import time
-from classes.BaseWebscraper import BaseWebscraper
+
 from selenium.webdriver.common.keys import Keys
+
+from classes.BaseWebscraper import BaseWebscraper
+
 
 class FalabellaWebscraper(BaseWebscraper):
 

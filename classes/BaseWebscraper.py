@@ -1,7 +1,12 @@
-from selenium import webdriver
+import json
+from concurrent.futures import ThreadPoolExecutor, wait
 from urllib.request import urlopen
+
+import requests
 from bs4 import BeautifulSoup
 from parameters import CHROMEDRIVER_PATH
+from selenium import webdriver
+
 
 class BaseWebscraper(object):
     
@@ -40,3 +45,23 @@ class BaseWebscraper(object):
             page_soup = BeautifulSoup(page_html, 'html.parser')
 
         return page_soup
+    
+    def downloadContent(self, url):
+        """Returns API response content
+        """
+
+        content = requests.get(url, stream=True)
+        item_info = json.loads(content.text)
+
+        return item_info
+    
+    # Multi threading requests
+    def multiThreadDownloadContent(self, urls, maxWorkers=None):
+        """Asynchronous execution of multiple url requests. Returns a list of Future` instances
+        """
+
+        with ThreadPoolExecutor(max_workers=maxWorkers) as executor:
+            items_info = [executor.submit(self.downloadContent, url) for url in urls]
+            wait(items_info)
+        
+        return items_info

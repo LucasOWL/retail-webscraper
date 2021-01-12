@@ -1,6 +1,4 @@
 from classes.BaseWebscraper import BaseWebscraper
-import requests
-import json
 
 class MusimundoWebscraper(BaseWebscraper):
 
@@ -17,10 +15,8 @@ class MusimundoWebscraper(BaseWebscraper):
         """
 
         search_terms = self.url.split('search?text=')[1]
-
         api_search_url = self.getAPIUrl(search=search_terms)
-        content = requests.get(api_search_url)
-        items_info = json.loads(content.text)
+        items_info = self.downloadContent(api_search_url)
 
         if len(items_info) > 0:
             for item in items_info['hits']['hits']:
