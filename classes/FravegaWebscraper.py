@@ -18,7 +18,7 @@ class FravegaWebscraper(BaseWebscraper):
             products_li = items_grid.find_all('li')
             self.products_prices = {
                 self.getProduct(product): self.getFinalPrice(product) 
-                    for product in products_li if self.keywords is None or any(kw.lower() in self.getProduct(product).lower() for kw in self.keywords)}
+                    for product in products_li if self.keywords is None or self.anyKeywordIsPresent(self.getProduct(product))}
 
         return self.products_prices
 

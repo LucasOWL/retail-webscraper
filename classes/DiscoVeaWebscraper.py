@@ -24,7 +24,7 @@ class DiscoVeaWebscraper(BaseWebscraper):
             products_li = items_grid.find_elements_by_tag_name('li')
             self.products_prices = {
                 self.getProduct(product): self.getFinalPrice(product) 
-                    for product in products_li if self.keywords is None or any(kw.lower() in self.getProduct(product).lower() for kw in self.keywords)}
+                    for product in products_li if self.keywords is None or self.anyKeywordIsPresent(self.getProduct(product))}
         except Exception as e:
             print(f'No results for given query. Error: {e}')
         

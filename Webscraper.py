@@ -1,8 +1,10 @@
+import json
 import smtplib
 import time
 from datetime import datetime
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
+from secrets import password, to_address, username
 
 from colorama import Fore, Style, init
 
@@ -12,18 +14,13 @@ from classes.DiscoVeaWebscraper import DiscoVeaWebscraper
 from classes.FalabellaWebscraper import FalabellaWebscraper
 from classes.FravegaWebscraper import FravegaWebscraper
 from classes.GarbarinoCompumundoWebscraper import GarbarinoCompumundoWebscraper
-from classes.JumboWebscraper import JumboWebscraper
+from classes.JumboWalmartSonyWebscraper import JumboWalmartSonyWebscraper
 from classes.MusimundoWebscraper import MusimundoWebscraper
-from classes.SonyWebscraper import SonyWebscraper
-from classes.WalmartWebscraper import WalmartWebscraper
-from parameters import (EMAIL_SUBJECT, PASSWORD, TIMEOUT, TO_ADDRESS,
-                        URLS_KEYWORDS, USERNAME)
-
 
 class Webscraper(object):
 
     NO_STOCK_STATUS = BaseWebscraper.NO_STOCK_STATUS
-
+        
     def __init__(self, urlsKeywordsDict, emailSubject, username, password, toAddress, timeout):
         self.urlsKeywordsDict = urlsKeywordsDict
         self.emailSubject = emailSubject
@@ -35,12 +32,12 @@ class Webscraper(object):
         self.webpageToObject = {
             'Frávega': FravegaWebscraper(**self.getURLKeywords('Frávega')),
             'Cetrogar': CetrogarWebscraper(**self.getURLKeywords('Cetrogar')),
-            'Sony': SonyWebscraper(**self.getURLKeywords('Sony')),
-            'Jumbo': JumboWebscraper(**self.getURLKeywords('Jumbo')),
+            'Sony': JumboWalmartSonyWebscraper(**self.getURLKeywords('Sony')),
+            'Jumbo': JumboWalmartSonyWebscraper(**self.getURLKeywords('Jumbo')),
             'Disco': DiscoVeaWebscraper(**self.getURLKeywords('Disco')),
             'Vea Digital': DiscoVeaWebscraper(**self.getURLKeywords('Vea Digital')),
             'Falabella': FalabellaWebscraper(**self.getURLKeywords('Falabella')),
-            'Walmart': WalmartWebscraper(**self.getURLKeywords('Walmart')),
+            'Walmart': JumboWalmartSonyWebscraper(**self.getURLKeywords('Walmart')),
             'Garbarino': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Garbarino')),
             'Musimundo': MusimundoWebscraper(**self.getURLKeywords('Musimundo')),
             'Compumundo': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Compumundo')),
@@ -212,8 +209,22 @@ class Webscraper(object):
     def urlHTML(self, url):
         return f'<p>URL: <a href="{url}" target="_blank">{url}</a></p>'
 
+# Read and process config.json file
+with open('config.json', encoding='utf-8') as f:
+    params = json.load(f)
+    urls_keywords = params['URLS_KEYWORDS']
+    for webpage in urls_keywords:
+        keywords = urls_keywords[webpage]['keywords']
+        if isinstance(keywords, str) and keywords.lower() == 'none':
+            urls_keywords[webpage]['keywords'] = None
+    email_subject = params['EMAIL_SUBJECT']
+    timeout = params['TIMEOUT']
+    chromedriver_path = params['CHROMEDRIVER_PATH']
 
-# Start
-ws = Webscraper(urlsKeywordsDict=URLS_KEYWORDS, emailSubject=EMAIL_SUBJECT, username=USERNAME,
-                password=PASSWORD, toAddress=TO_ADDRESS, timeout=TIMEOUT)
-ws.checkNewProducts()
+def main():
+    ws = Webscraper(urlsKeywordsDict=urls_keywords, emailSubject=email_subject, username=username,
+                password=password, toAddress=to_address, timeout=timeout)
+    ws.checkNewProducts()
+
+if __name__ == '__main__':
+    main()

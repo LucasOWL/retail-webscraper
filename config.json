@@ -1,0 +1,40 @@
+{
+    "EMAIL_SUBJECT": "Hay nuevos productos de PS5",
+    "TIMEOUT": 5,
+    "CHROMEDRIVER_PATH": "C:\\webdrivers\\chromedriver.exe",
+    "URLS_KEYWORDS": {
+        "Frávega": {
+            "URL": "https://www.fravega.com/l/?keyword=ps5",
+            "keywords": ["PS5", "Playstation 5", "Play station 5", "Dualsense", "Dual sense", "Pulse", "Pulse3D", "Pulse 3D"]},
+        "Cetrogar": {
+            "URL": "https://www.cetrogar.com.ar/catalogsearch/result/?q=ps5",
+            "keywords": ["PS5", "Playstation 5", "Play station 5", "Dualsense", "Dual sense", "Pulse", "Pulse3D", "Pulse 3D"]},
+        "Sony": {
+            "URL": "https://store.sony.com.ar/ps5",
+            "keywords": "None"},
+        "Jumbo": {
+            "URL": "https://www.jumbo.com.ar/busca/?ft=ps5",
+            "keywords": "None"},
+        "Disco": {
+            "URL": "https://www.disco.com.ar/Comprar/Home.aspx#_atCategory=false&_atGrilla=true&_query=ps5",
+            "keywords": "None"},
+        "Vea Digital": {
+            "URL": "https://www.veadigital.com.ar/Comprar/Home.aspx#_atCategory=false&_atGrilla=true&_query=ps5",
+            "keywords": "None"},
+        "Falabella": {
+            "URL": "https://www.falabella.com.ar/falabella-ar/category/cat10166/Mundo-gamer?facetSelected=true&f.product.brandName=sony&isPLP=1",
+            "keywords": ["PS5", "Playstation 5", "Play station 5", "Dualsense", "Dual sense", "Pulse", "Pulse3D", "Pulse 3D"]},
+        "Walmart": {
+            "URL": "https://www.walmart.com.ar/busca?ft=ps5",
+            "keywords": ["PS5", "Playstation 5", "Play station 5", "Dualsense", "Dual sense", "Pulse", "Pulse3D", "Pulse 3D"]},
+        "Garbarino": {
+            "URL": "https://www.garbarino.com/q/ps5/srch?q=ps5",
+            "keywords": "None"},
+        "Musimundo": {
+            "URL": "https://www.musimundo.com/mi-musimundo/search?text=ps5",
+            "keywords": ["PS5", "Playstation 5", "Play station 5", "Dualsense", "Dual sense", "Pulse", "Pulse3D", "Pulse 3D"]},
+        "Compumundo": {
+            "URL": "https://www.compumundo.com.ar/q/ps5/srch?q=ps5",
+            "keywords": "None"}
+    }
+}

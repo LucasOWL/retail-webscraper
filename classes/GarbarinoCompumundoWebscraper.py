@@ -18,7 +18,7 @@ class GarbarinoCompumundoWebscraper(BaseWebscraper):
             products_divs = items_grid.find_all('div', recursive=False)
             for product_div in products_divs:
                 product = self.getProduct(product_div)
-                if self.keywords is None or any(kw.lower() in product.lower() for kw in self.keywords):
+                if self.keywords is None or self.anyKeywordIsPresent(product):
                     self.products_prices[product] = self.getFinalPrice(product_div)
         
         return self.products_prices

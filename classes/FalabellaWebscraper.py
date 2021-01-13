@@ -27,7 +27,7 @@ class FalabellaWebscraper(BaseWebscraper):
             products_divs = items_grid.find_elements_by_xpath('//div[contains(@class, "search-results-4-grid grid-pod")]')
             for product_div in products_divs:
                 product = self.getProduct(product_div)
-                if self.keywords is None or any(kw.lower() in product.lower() for kw in self.keywords):
+                if self.keywords is None or self.anyKeywordIsPresent(product):
                     self.products_prices.update({product: self.getFinalPrice(product_div)})
         except Exception as e:
             print(f'No results for given query. Error: {e}')

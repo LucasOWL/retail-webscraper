@@ -15,7 +15,7 @@ Windows:
 ```
 Linux:
 ```bash
-source env\bin\activate
+source env/bin/activate
 ```
 Install required packages:
 ```bash
@@ -38,7 +38,7 @@ Windows:
 ```
 Linux:
 ```bash
-source env\bin\activate
+source env/bin/activate
 ```
 Run:
 ```bash

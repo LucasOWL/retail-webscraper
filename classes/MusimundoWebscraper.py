@@ -21,7 +21,7 @@ class MusimundoWebscraper(BaseWebscraper):
         if len(items_info) > 0:
             for item in items_info['hits']['hits']:
                 product = self.getProduct(item)
-                if self.keywords is None or any(kw.lower() in product.lower() for kw in self.keywords):
+                if self.keywords is None or self.anyKeywordIsPresent(product):
                     if product not in self.products_prices:
                         self.products_prices.update({product: self.getFinalPrice(item)})
         

@@ -4,7 +4,6 @@ from urllib.request import urlopen
 
 import requests
 from bs4 import BeautifulSoup
-from parameters import CHROMEDRIVER_PATH
 from selenium import webdriver
 
 
@@ -26,13 +25,17 @@ class BaseWebscraper(object):
         """Initializes a Selenium webdriver Chrome instance
         """
 
+        with open('config.json', encoding='utf-8') as f:
+            params = json.load(f)
+            chromedriver_path = params['CHROMEDRIVER_PATH']
+        
         driver_options = webdriver.ChromeOptions()
         if incognito:
             driver_options.add_argument('--incognito')
         if headless:
             driver_options.add_argument('--headless')
         driver_options.add_experimental_option('excludeSwitches', ['enable-logging'])  # removes `DevTools listening on ...`
-        driver = webdriver.Chrome(CHROMEDRIVER_PATH, options=driver_options)
+        driver = webdriver.Chrome(chromedriver_path, options=driver_options)
 
         return driver
     
@@ -65,3 +68,6 @@ class BaseWebscraper(object):
             wait(items_info)
         
         return items_info
+    
+    def anyKeywordIsPresent(self, product):
+        return any(kw.lower() in product.lower().strip().split(' ') for kw in self.keywords)
