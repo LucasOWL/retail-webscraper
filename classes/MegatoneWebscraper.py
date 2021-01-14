@@ -17,7 +17,7 @@ class MegatoneWebscraper(BaseWebscraper):
         
         page_number = pageNumber
 
-        if page_number == 1 or driver is None:
+        if driver is None:
             driver = self.getChromeDriver(incognito=True, headless=True)
             driver.get(self.url)
             driver.find_element_by_xpath('//body').send_keys(Keys.END)  # scroll to bottom

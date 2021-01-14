@@ -82,7 +82,6 @@ class Webscraper(object):
             'Compumundo': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Compumundo')),
             'Carrefour': CarrefourWebscraper(**self.getURLKeywords('Carrefour')),
             'Megatone': MegatoneWebscraper(**self.getURLKeywords('Megatone')),
-            'Test Frávega': FravegaWebscraper(**self.getURLKeywords('Test Frávega')),
         }
 
         products_by_webpage = dict()
@@ -134,6 +133,8 @@ class Webscraper(object):
                                 webpage_new_products_list.append(product)
                                 new_products[webpage] = webpage_new_products_list
                                 send_email_flag = True
+                
+                initial_products_prices = new_products_prices.copy()
 
                 if send_email_flag:
                     self.sendEmail(productsPrices=new_products_prices, newProducts=new_products)
@@ -144,7 +145,6 @@ class Webscraper(object):
                         alerts += 1
                         last_alert = self.getCurrentTime()
                     send_email_flag = False
-                    initial_products_prices = new_products_prices.copy()
                 else:
                     print(f'{Fore.YELLOW}NOTHING NEW{Style.RESET_ALL}. Time: {now}. Alerts: {alerts}{f" (last: {last_alert})" if alerts > 0 else ""}')
             except Exception as e:
