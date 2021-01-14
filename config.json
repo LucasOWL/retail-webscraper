@@ -35,6 +35,12 @@
             "keywords": ["PS5", "Playstation 5", "Play station 5", "Dualsense", "Dual sense", "Pulse", "Pulse3D", "Pulse 3D"]},
         "Compumundo": {
             "URL": "https://www.compumundo.com.ar/q/ps5/srch?q=ps5",
+            "keywords": "None"},
+        "Carrefour": {
+            "URL": "https://www.carrefour.com.ar/catalogsearch/result/?q=ps5",
+            "keywords": "None"},
+        "Megatone": {
+            "URL": "https://www.megatone.net/search/ps5/",
             "keywords": "None"}
     }
 }

@@ -16,11 +16,13 @@ from classes.FravegaWebscraper import FravegaWebscraper
 from classes.GarbarinoCompumundoWebscraper import GarbarinoCompumundoWebscraper
 from classes.JumboWalmartSonyWebscraper import JumboWalmartSonyWebscraper
 from classes.MusimundoWebscraper import MusimundoWebscraper
+from classes.CarrefourWebscraper import CarrefourWebscraper
+from classes.MegatoneWebscraper import MegatoneWebscraper
 
 class Webscraper(object):
 
     NO_STOCK_STATUS = BaseWebscraper.NO_STOCK_STATUS
-        
+            
     def __init__(self, urlsKeywordsDict, emailSubject, username, password, toAddress, timeout):
         self.urlsKeywordsDict = urlsKeywordsDict
         self.emailSubject = emailSubject
@@ -28,20 +30,6 @@ class Webscraper(object):
         self.password = password
         self.toAddress = toAddress
         self.timeout = timeout
-    
-        self.webpageToObject = {
-            'Frávega': FravegaWebscraper(**self.getURLKeywords('Frávega')),
-            'Cetrogar': CetrogarWebscraper(**self.getURLKeywords('Cetrogar')),
-            'Sony': JumboWalmartSonyWebscraper(**self.getURLKeywords('Sony')),
-            'Jumbo': JumboWalmartSonyWebscraper(**self.getURLKeywords('Jumbo')),
-            'Disco': DiscoVeaWebscraper(**self.getURLKeywords('Disco')),
-            'Vea Digital': DiscoVeaWebscraper(**self.getURLKeywords('Vea Digital')),
-            'Falabella': FalabellaWebscraper(**self.getURLKeywords('Falabella')),
-            'Walmart': JumboWalmartSonyWebscraper(**self.getURLKeywords('Walmart')),
-            'Garbarino': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Garbarino')),
-            'Musimundo': MusimundoWebscraper(**self.getURLKeywords('Musimundo')),
-            'Compumundo': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Compumundo')),
-        }
     
     def __repr__(self):
         return f'{self.__class__.__name__}({self.urlsKeywordsDict})'
@@ -80,15 +68,32 @@ class Webscraper(object):
         """Returns a dictionary of product: price for every product in every webpage
         """
 
-        products_by_webpage = {}
-        for webpage in self.webpageToObject:
+        webpage_to_object = {
+            'Frávega': FravegaWebscraper(**self.getURLKeywords('Frávega')),
+            'Cetrogar': CetrogarWebscraper(**self.getURLKeywords('Cetrogar')),
+            'Sony': JumboWalmartSonyWebscraper(**self.getURLKeywords('Sony')),
+            'Jumbo': JumboWalmartSonyWebscraper(**self.getURLKeywords('Jumbo')),
+            'Disco': DiscoVeaWebscraper(**self.getURLKeywords('Disco')),
+            'Vea Digital': DiscoVeaWebscraper(**self.getURLKeywords('Vea Digital')),
+            'Falabella': FalabellaWebscraper(**self.getURLKeywords('Falabella')),
+            'Walmart': JumboWalmartSonyWebscraper(**self.getURLKeywords('Walmart')),
+            'Garbarino': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Garbarino')),
+            'Musimundo': MusimundoWebscraper(**self.getURLKeywords('Musimundo')),
+            'Compumundo': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Compumundo')),
+            'Carrefour': CarrefourWebscraper(**self.getURLKeywords('Carrefour')),
+            'Megatone': MegatoneWebscraper(**self.getURLKeywords('Megatone')),
+            'Test Frávega': FravegaWebscraper(**self.getURLKeywords('Test Frávega')),
+        }
+
+        products_by_webpage = dict()
+        for webpage in webpage_to_object:
             if self.getURL(webpage) is not None:
                 if verbose:
                     print(f'Scraping {webpage}...')
                 if printTime:
                     initial_time = time.time()
 
-                products_by_webpage[webpage] = self.webpageToObject[webpage].getProducts()
+                products_by_webpage[webpage] = webpage_to_object[webpage].getProducts()
                 
                 if printTime:
                     scraping_time = time.time() - initial_time
@@ -139,7 +144,7 @@ class Webscraper(object):
                         alerts += 1
                         last_alert = self.getCurrentTime()
                     send_email_flag = False
-                    initial_products_prices = new_products_prices
+                    initial_products_prices = new_products_prices.copy()
                 else:
                     print(f'{Fore.YELLOW}NOTHING NEW{Style.RESET_ALL}. Time: {now}. Alerts: {alerts}{f" (last: {last_alert})" if alerts > 0 else ""}')
             except Exception as e:
