@@ -30,6 +30,22 @@ class Webscraper(object):
         self.password = password
         self.toAddress = toAddress
         self.timeout = timeout
+
+        self.webpage_to_object = {
+            'Frávega': FravegaWebscraper,
+            'Cetrogar': CetrogarWebscraper,
+            'Sony': JumboWalmartSonyWebscraper,
+            'Jumbo': JumboWalmartSonyWebscraper,
+            'Disco': DiscoVeaWebscraper,
+            'Vea Digital': DiscoVeaWebscraper,
+            'Falabella': FalabellaWebscraper,
+            'Walmart': JumboWalmartSonyWebscraper,
+            'Garbarino': GarbarinoCompumundoWebscraper,
+            'Musimundo': MusimundoWebscraper,
+            'Compumundo': GarbarinoCompumundoWebscraper,
+            'Carrefour': CarrefourWebscraper,
+            'Megatone': MegatoneWebscraper,
+        }
     
     def __repr__(self):
         return f'{self.__class__.__name__}({self.urlsKeywordsDict})'
@@ -68,31 +84,16 @@ class Webscraper(object):
         """Returns a dictionary of product: price for every product in every webpage
         """
 
-        webpage_to_object = {
-            'Frávega': FravegaWebscraper(**self.getURLKeywords('Frávega')),
-            'Cetrogar': CetrogarWebscraper(**self.getURLKeywords('Cetrogar')),
-            'Sony': JumboWalmartSonyWebscraper(**self.getURLKeywords('Sony')),
-            'Jumbo': JumboWalmartSonyWebscraper(**self.getURLKeywords('Jumbo')),
-            'Disco': DiscoVeaWebscraper(**self.getURLKeywords('Disco')),
-            'Vea Digital': DiscoVeaWebscraper(**self.getURLKeywords('Vea Digital')),
-            'Falabella': FalabellaWebscraper(**self.getURLKeywords('Falabella')),
-            'Walmart': JumboWalmartSonyWebscraper(**self.getURLKeywords('Walmart')),
-            'Garbarino': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Garbarino')),
-            'Musimundo': MusimundoWebscraper(**self.getURLKeywords('Musimundo')),
-            'Compumundo': GarbarinoCompumundoWebscraper(**self.getURLKeywords('Compumundo')),
-            'Carrefour': CarrefourWebscraper(**self.getURLKeywords('Carrefour')),
-            'Megatone': MegatoneWebscraper(**self.getURLKeywords('Megatone')),
-        }
-
         products_by_webpage = dict()
-        for webpage in webpage_to_object:
+        for webpage in self.webpage_to_object:
             if self.getURL(webpage) is not None:
                 if verbose:
                     print(f'Scraping {webpage}...')
                 if printTime:
                     initial_time = time.time()
-
-                products_by_webpage[webpage] = webpage_to_object[webpage].getProducts()
+                
+                webscraper_instance = self.webpage_to_object[webpage](**self.getURLKeywords(webpage))
+                products_by_webpage[webpage] = webscraper_instance.getProducts()
                 
                 if printTime:
                     scraping_time = time.time() - initial_time

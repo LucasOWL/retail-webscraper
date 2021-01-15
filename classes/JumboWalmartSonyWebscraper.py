@@ -54,8 +54,11 @@ class JumboWalmartSonyWebscraper(BaseWebscraper):
 
     def getFinalPrice(self, itemInfo):
         commertial_offer = itemInfo['items'][0]['sellers'][0]['commertialOffer']
-        if commertial_offer['AvailableQuantity'] == 0:
+        if self.getAvailableQuantity(commertial_offer) == 0:
             return self.NO_STOCK_STATUS
         else:
             price = commertial_offer['Price']
             return f'$ {price:,.2f}'
+    
+    def getAvailableQuantity(self, commertialOffer):
+        return commertialOffer['AvailableQuantity']

@@ -38,9 +38,6 @@
             "keywords": "None"},
         "Carrefour": {
             "URL": "https://www.carrefour.com.ar/catalogsearch/result/?q=ps5",
-            "keywords": "None"},
-        "Megatone": {
-            "URL": "https://www.megatone.net/search/ps5/",
             "keywords": "None"}
     }
 }

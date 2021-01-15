@@ -24,7 +24,7 @@ class FalabellaWebscraper(BaseWebscraper):
         # Find products and prices
         try:
             items_grid = driver.find_element_by_id('testId-searchResults-products')
-            products_divs = items_grid.find_elements_by_xpath('//div[contains(@class, "search-results-4-grid grid-pod")]')
+            products_divs = items_grid.find_elements_by_xpath('.//div[contains(@class, "search-results")]')
             for product_div in products_divs:
                 product = self.getProduct(product_div)
                 if self.keywords is None or self.anyKeywordIsPresent(product):

@@ -70,4 +70,4 @@ class BaseWebscraper(object):
         return items_info
     
     def anyKeywordIsPresent(self, product):
-        return any(kw.lower() in product.lower().strip().split(' ') for kw in self.keywords)
+        return any(kw.lower() in product.lower().strip() for kw in self.keywords)
