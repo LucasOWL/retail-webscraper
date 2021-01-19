@@ -8,7 +8,7 @@
             "name": "Python: Webscraper",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/Webscraper.py",
+            "program": "${workspaceFolder}/webscraper.py",
             "console": "integratedTerminal"
         }
     ]
