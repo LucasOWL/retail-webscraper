@@ -42,5 +42,5 @@ source env/bin/activate
 ```
 Run:
 ```bash
-python Webscraper.py
+python webscraper.py
 ```

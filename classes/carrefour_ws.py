@@ -2,23 +2,23 @@ import time
 
 from selenium.webdriver.common.keys import Keys
 
-from classes.BaseWebscraper import BaseWebscraper
+from classes.base_ws import BaseWS
 
-class CarrefourWebscraper(BaseWebscraper):
+class CarrefourWS(BaseWS):
 
     def __init__(self, url, keywords, name='Carrefour'):
         self.name = name
         self.products_prices = dict()
         super().__init__(url, keywords)
     
-    def getProducts(self, waitingTime=2):
+    def get_products(self, waiting_time=2):
         """Returns a dictionary of product: price for every product listed on webpage
         """
         
-        driver = self.getChromeDriver(incognito=True, headless=True)
+        driver = self.get_chrome_driver(incognito=True, headless=True)
         driver.get(self.url)
         driver.find_element_by_xpath('//body').send_keys(Keys.END)  # scroll to bottom
-        time.sleep(waitingTime)  # wait until everything is loaded
+        time.sleep(waiting_time)  # wait until everything is loaded
         
         # Find products and prices
         try:
@@ -27,10 +27,10 @@ class CarrefourWebscraper(BaseWebscraper):
             products_divs = items_grid.find_elements_by_xpath(
                 './/div[contains(@class, "col") and contains(@class, "product-card")]')
             for product_div in products_divs:
-                product = self.getProduct(product_div)
-                if self.keywords is None or self.anyKeywordIsPresent(product):
-                    self.products_prices.update({product: self.getFinalPrice(product_div)})
-        except Exception as e:
+                product = self.get_product(product_div)
+                if self.keywords is None or self.any_keyword_is_present(product):
+                    self.products_prices.update({product: self.get_final_price(product_div)})
+        except:
             pass
         
         # Close browser
@@ -38,8 +38,8 @@ class CarrefourWebscraper(BaseWebscraper):
         
         return self.products_prices
 
-    def getProduct(self, element):
+    def get_product(self, element):
         return element.find_element_by_class_name('title').text.strip()
 
-    def getFinalPrice(self, element):
+    def get_final_price(self, element):
         return element.find_element_by_xpath('.//p[@class="price"]').text.strip().replace('\n', '')

@@ -2,35 +2,35 @@ import time
 
 from selenium.webdriver.common.keys import Keys
 
-from classes.BaseWebscraper import BaseWebscraper
+from classes.base_ws import BaseWS
 
-class MegatoneWebscraper(BaseWebscraper):
+class MegatoneWS(BaseWS):
 
     def __init__(self, url, keywords, name='Megatone'):
         self.name = name
         self.products_prices = dict()
         super().__init__(url, keywords)
     
-    def getProducts(self, waitingTime=2, pageNumber=1, driver=None):
+    def get_products(self, waiting_time=2, page_number=1, driver=None):
         """Returns a dictionary of product: price for every product listed on webpage
         """
         
-        page_number = pageNumber
+        page_number = page_number
 
         if driver is None:
-            driver = self.getChromeDriver(incognito=True, headless=True)
+            driver = self.get_chrome_driver(incognito=True, headless=True)
             driver.get(self.url)
             driver.find_element_by_xpath('//body').send_keys(Keys.END)  # scroll to bottom
-            time.sleep(waitingTime)  # wait until everything is loaded
+            time.sleep(waiting_time)  # wait until everything is loaded
         
         # Find products and prices
         try:
             items_grid = driver.find_element_by_id('Productos')
             products_divs = items_grid.find_elements_by_class_name('CajaProductoGrilla')
             for product_div in products_divs:
-                product = self.getProduct(product_div)
-                if self.keywords is None or self.anyKeywordIsPresent(product):
-                    self.products_prices.update({product: self.getFinalPrice(product_div)})
+                product = self.get_product(product_div)
+                if self.keywords is None or self.any_keyword_is_present(product):
+                    self.products_prices.update({product: self.get_final_price(product_div)})
         except Exception as e:
             print(f'No results for given query. Error: {e}')
         
@@ -40,8 +40,8 @@ class MegatoneWebscraper(BaseWebscraper):
             next_page_button = driver.find_element_by_xpath(
                 f'//button[@type="button" and contains(@class, "BtnPaginado") and text()={page_number}]')
             next_page_button.send_keys(Keys.ENTER)
-            time.sleep(waitingTime)
-            self.getProducts(pageNumber=page_number, driver=driver)
+            time.sleep(waiting_time)
+            self.get_products(page_number=page_number, driver=driver)
         except:
             pass
         finally:
@@ -50,9 +50,9 @@ class MegatoneWebscraper(BaseWebscraper):
         
         return self.products_prices
 
-    def getProduct(self, element):
+    def get_product(self, element):
         return element.find_element_by_xpath('.//div[@class="aliLeft Titulo TituloMobile mL8"]').text.strip()
 
-    def getFinalPrice(self, element):
+    def get_final_price(self, element):
         price =  element.find_element_by_xpath('.//div[contains(@class, "fLeft PrecioMostrado")]').text.replace('$', '').strip()
         return f'$ {float(price):,.2f}'

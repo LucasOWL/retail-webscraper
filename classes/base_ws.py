@@ -7,7 +7,7 @@ from bs4 import BeautifulSoup
 from selenium import webdriver
 
 
-class BaseWebscraper(object):
+class BaseWS(object):
     
     NO_STOCK_STATUS = 'Sin stock'
 
@@ -21,7 +21,7 @@ class BaseWebscraper(object):
     def __str__(self):
         return f'{self.__class__.__name__}: {self.url} with keywords {self.keywords}'
     
-    def getChromeDriver(self, incognito=True, headless=True):
+    def get_chrome_driver(self, incognito=True, headless=True):
         """Initializes a Selenium webdriver Chrome instance
         """
 
@@ -39,7 +39,7 @@ class BaseWebscraper(object):
 
         return driver
     
-    def getPageSoup(self, url):
+    def get_page_soup(self, url):
         """Returns webpage with BeautifulSoup
         """
 
@@ -49,7 +49,7 @@ class BaseWebscraper(object):
 
         return page_soup
     
-    def downloadContent(self, url):
+    def download_content(self, url):
         """Returns API response content
         """
 
@@ -59,15 +59,15 @@ class BaseWebscraper(object):
         return item_info
     
     # Multi threading requests
-    def multiThreadDownloadContent(self, urls, maxWorkers=None):
+    def multithread_download_content(self, urls, max_workers=None):
         """Asynchronous execution of multiple url requests. Returns a list of Future` instances
         """
 
-        with ThreadPoolExecutor(max_workers=maxWorkers) as executor:
-            items_info = [executor.submit(self.downloadContent, url) for url in urls]
+        with ThreadPoolExecutor(max_workers=max_workers) as executor:
+            items_info = [executor.submit(self.download_content, url) for url in urls]
             wait(items_info)
         
         return items_info
     
-    def anyKeywordIsPresent(self, product):
+    def any_keyword_is_present(self, product):
         return any(kw.lower() in product.lower().strip() for kw in self.keywords)
