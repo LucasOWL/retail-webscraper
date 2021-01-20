@@ -9,7 +9,7 @@ from selenium import webdriver
 
 class BaseWS(object):
     
-    NO_STOCK_STATUS = 'Sin stock'
+    NO_STOCK_STATUS = 'Out of stock'
 
     def __init__(self, url, keywords=None):
         self.url = url

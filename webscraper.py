@@ -107,7 +107,7 @@ class Webscraper(object):
         """
         
         init()  # Initiates colorama
-        print(f'{Fore.BLUE}STARTING WEBSCRAPER!{Style.RESET_ALL} Time: {self.get_current_time()}')
+        print(f'{Fore.BLUE + Style.BRIGHT}STARTING WEBSCRAPER!{Style.RESET_ALL} Time: {self.get_current_time()}')
 
         initial_products_prices = self.get_all_products(verbose=False, print_time=False)
         send_email_flag = True
@@ -127,7 +127,7 @@ class Webscraper(object):
                             was_product_restocked = False
                             if not is_new_product:
                                 was_product_restocked = initial_products_prices[webpage][product] == self.NO_STOCK_STATUS and \
-                                                         new_products_prices[webpage][product] != self.NO_STOCK_STATUS 
+                                                        new_products_prices[webpage][product] != self.NO_STOCK_STATUS 
                             if is_new_product or was_product_restocked:
                                 webpage_new_products_list = new_products[webpage]
                                 webpage_new_products_list.append(product)
@@ -139,14 +139,17 @@ class Webscraper(object):
                 if send_email_flag:
                     self.send_email(products_prices=new_products_prices, new_products=new_products)
                     if n == 0:
-                        print(f'{Fore.YELLOW}FIRST SCRAPING{Style.RESET_ALL} E-mail has been sent. Time: {self.get_current_time()}')
+                        print(f'{Fore.YELLOW + Style.BRIGHT}FIRST SCRAPING{Style.RESET_ALL} E-mail has been sent. Time: {self.get_current_time()}')
                     else:
                         print(f'{Fore.GREEN}NEW PRODUCTS ALERT!{Style.RESET_ALL} E-mail has been sent. Time: {self.get_current_time()}')
+                        for webpage in new_products:
+                            for product in new_products[webpage]:
+                                print(f'\t{webpage}: {Fore.GREEN}{product}{Style.RESET_ALL} ({new_products_prices[webpage][product]})')
                         alerts += 1
                         last_alert = self.get_current_time()
                     send_email_flag = False
                 else:
-                    print(f'{Fore.YELLOW}NOTHING NEW{Style.RESET_ALL}. Time: {self.get_current_time()}. Alerts: {alerts}{f" (last: {last_alert})" if alerts > 0 else ""}')
+                    print(f'{Fore.YELLOW + Style.BRIGHT}NOTHING NEW{Style.RESET_ALL}. Time: {self.get_current_time()}. Alerts: {alerts}{f" (last: {last_alert})" if alerts > 0 else ""}')
             except Exception as e:
                 print(f"Error: '{e}'. Time: {self.get_current_time()}")
                 continue
@@ -207,7 +210,7 @@ class Webscraper(object):
         price_html = price
         if price == self.NO_STOCK_STATUS:
             price_html = f'<span style="color: red";>{price}</span>'
-        new_product_html = '<span style="color: green; font-weight: bold">(NUEVO) </span>' \
+        new_product_html = '<span style="color: green; font-weight: bold">(NEW) </span>' \
                                 if product in new_products_list else ''
         return f'<li>{new_product_html}{product}: {price_html}</li>'
     
