@@ -107,7 +107,7 @@ class Webscraper(object):
         """
         
         init()  # Initiates colorama
-        print(f'{Fore.BLUE + Style.BRIGHT}STARTING WEBSCRAPER!{Style.RESET_ALL} Time: {self.get_current_time()}')
+        print(f'{Fore.BLUE + Style.BRIGHT}STARTING WEBSCRAPER!{Style.RESET_ALL} Time: {self.get_current_time()}\n')
 
         initial_products_prices = self.get_all_products(verbose=False, print_time=False)
         send_email_flag = True
@@ -139,17 +139,18 @@ class Webscraper(object):
                 if send_email_flag:
                     self.send_email(products_prices=new_products_prices, new_products=new_products)
                     if n == 0:
-                        print(f'{Fore.YELLOW + Style.BRIGHT}FIRST SCRAPING{Style.RESET_ALL} E-mail has been sent. Time: {self.get_current_time()}')
+                        print(f'{Fore.YELLOW + Style.BRIGHT}FIRST SCRAPING{Style.RESET_ALL} E-mail has been sent. Time: {self.get_current_time()}\n')
                     else:
                         print(f'{Fore.GREEN}NEW PRODUCTS ALERT!{Style.RESET_ALL} E-mail has been sent. Time: {self.get_current_time()}')
                         for webpage in new_products:
                             for product in new_products[webpage]:
                                 print(f'\t{webpage}: {Fore.GREEN}{product}{Style.RESET_ALL} ({new_products_prices[webpage][product]})')
+                        print('')
                         alerts += 1
                         last_alert = self.get_current_time()
                     send_email_flag = False
                 else:
-                    print(f'{Fore.YELLOW + Style.BRIGHT}NOTHING NEW{Style.RESET_ALL}. Time: {self.get_current_time()}. Alerts: {alerts}{f" (last: {last_alert})" if alerts > 0 else ""}')
+                    print(f'{Fore.YELLOW + Style.BRIGHT}NOTHING NEW{Style.RESET_ALL}. Time: {self.get_current_time()}. Alerts: {alerts}{f" (last: {last_alert})" if alerts > 0 else ""}\n')
             except Exception as e:
                 print(f"Error: '{e}'. Time: {self.get_current_time()}")
                 continue
