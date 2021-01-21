@@ -21,17 +21,16 @@ class CarrefourWS(BaseWS):
         time.sleep(waiting_time)  # wait until everything is loaded
         
         # Find products and prices
-        try:
-            items_grid = driver.find_element_by_xpath(
-                '//div[@class="category-products"]//div[@class="row"]')
+        items_grids = driver.find_elements_by_xpath(
+            '//div[@class="category-products"]//div[@class="row"]')
+        if len (items_grids) > 0:
+            items_grid = items_grids[0]
             products_divs = items_grid.find_elements_by_xpath(
                 './/div[contains(@class, "col") and contains(@class, "product-card")]')
             for product_div in products_divs:
                 product = self.get_product(product_div)
                 if self.keywords is None or self.any_keyword_is_present(product):
                     self.products_prices.update({product: self.get_final_price(product_div)})
-        except:
-            pass
         
         # Close browser
         driver.quit()

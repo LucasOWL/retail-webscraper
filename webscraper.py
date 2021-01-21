@@ -93,7 +93,12 @@ class Webscraper(object):
                     initial_time = time.time()
                 
                 webscraper_instance = self.webpage_to_object[webpage](**self.get_url_keywords(webpage))
-                products_by_webpage[webpage] = webscraper_instance.get_products()
+                try:
+                    products_by_webpage[webpage] = webscraper_instance.get_products()
+                except Exception as e:
+                    products_by_webpage[webpage] = dict()
+                    if verbose:
+                        print(f'\t{Fore.RED + Style.BRIGHT}Error{Style.RESET_ALL}: {e}')
                 
                 if print_time:
                     scraping_time = time.time() - initial_time
@@ -107,7 +112,7 @@ class Webscraper(object):
         """
         
         init()  # Initiates colorama
-        print(f'{Fore.BLUE + Style.BRIGHT}STARTING WEBSCRAPER!{Style.RESET_ALL} Time: {self.get_current_time()}\n')
+        print(f'\n{Fore.BLUE + Style.BRIGHT}STARTING WEBSCRAPER!{Style.RESET_ALL} Time: {self.get_current_time()}\n')
 
         initial_products_prices = self.get_all_products(verbose=False, print_time=False)
         send_email_flag = True

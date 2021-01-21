@@ -22,15 +22,12 @@ class FalabellaWS(BaseWS):
         time.sleep(waiting_time)  # wait until everything is loaded
         
         # Find products and prices
-        try:
-            items_grid = driver.find_element_by_id('testId-searchResults-products')
-            products_divs = items_grid.find_elements_by_xpath('.//div[contains(@class, "search-results")]')
-            for product_div in products_divs:
-                product = self.get_product(product_div)
-                if self.keywords is None or self.any_keyword_is_present(product):
-                    self.products_prices.update({product: self.get_final_price(product_div)})
-        except Exception as e:
-            print(f'No results for given query. Error: {e}')
+        items_grid = driver.find_element_by_id('testId-searchResults-products')
+        products_divs = items_grid.find_elements_by_xpath('.//div[contains(@class, "search-results")]')
+        for product_div in products_divs:
+            product = self.get_product(product_div)
+            if self.keywords is None or self.any_keyword_is_present(product):
+                self.products_prices.update({product: self.get_final_price(product_div)})
         
         # Close browser
         driver.quit()

@@ -19,14 +19,11 @@ class DiscoVeaWS(BaseWS):
         time.sleep(waiting_time)
         
         # Find products and prices
-        try:
-            items_grid = driver.find_element_by_id('product-list')
-            products_li = items_grid.find_elements_by_tag_name('li')
-            self.products_prices = {
-                self.get_product(product): self.get_final_price(product) 
-                    for product in products_li if self.keywords is None or self.any_keyword_is_present(self.get_product(product))}
-        except Exception as e:
-            print(f'No results for given query. Error: {e}')
+        items_grid = driver.find_element_by_id('product-list')
+        products_li = items_grid.find_elements_by_tag_name('li')
+        self.products_prices = {
+            self.get_product(product): self.get_final_price(product) 
+                for product in products_li if self.keywords is None or self.any_keyword_is_present(self.get_product(product))}
         
         # Close browser
         driver.quit()
