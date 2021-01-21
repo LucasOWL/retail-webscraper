@@ -1,6 +1,6 @@
 import json
 from concurrent.futures import ThreadPoolExecutor, wait
-from urllib.request import urlopen
+from urllib.request import Request, urlopen
 
 import requests
 from bs4 import BeautifulSoup
@@ -10,6 +10,9 @@ from selenium import webdriver
 class BaseWS(object):
     
     NO_STOCK_STATUS = 'Out of stock'
+    HEADERS = {
+        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/87.0.4280.66 Safari/537.36'
+    }
 
     def __init__(self, url, keywords=None):
         self.url = url
@@ -39,32 +42,42 @@ class BaseWS(object):
 
         return driver
     
+    
+    def get_content(self, url):
+        """Returns URL content from request
+        """
+
+        session = requests.Session()
+        content = session.get(url, headers=self.HEADERS, stream=True).text
+        session.close()
+
+        return content
+    
     def get_page_soup(self, url):
         """Returns webpage with BeautifulSoup
         """
 
-        with urlopen(url) as uClient:
-            page_html = uClient.read()
-            page_soup = BeautifulSoup(page_html, 'html.parser')
+        content = self.get_content(url)
+        page_soup = BeautifulSoup(content, 'html.parser')
 
         return page_soup
     
-    def download_content(self, url):
-        """Returns API response content
+    def get_content_json(self, url):
+        """Returns webpage as json
         """
 
-        content = requests.get(url, stream=True)
-        item_info = json.loads(content.text)
-
+        content = self.get_content(url)
+        item_info = json.loads(content)
+        
         return item_info
     
-    # Multi threading requests
-    def multithread_download_content(self, urls, max_workers=None):
-        """Asynchronous execution of multiple url requests. Returns a list of Future` instances
+    # Multi threaded requests
+    def multithread_get_content_json(self, urls, max_workers=None):
+        """Asynchronous execution of multiple url requests. Returns a list of Future`s instances
         """
 
         with ThreadPoolExecutor(max_workers=max_workers) as executor:
-            items_info = [executor.submit(self.download_content, url) for url in urls]
+            items_info = [executor.submit(self.get_content_json, url) for url in urls]
             wait(items_info)
         
         return items_info

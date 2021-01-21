@@ -16,7 +16,7 @@ class MusimundoWS(BaseWS):
 
         search_terms = self.url.split('search?text=')[1]
         api_search_url = self.get_api_url(search=search_terms)
-        items_info = self.download_content(api_search_url)
+        items_info = self.get_content_json(api_search_url)
 
         if len(items_info) > 0:
             for item in items_info['hits']['hits']:
