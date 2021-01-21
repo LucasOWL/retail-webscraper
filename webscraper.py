@@ -144,7 +144,7 @@ class Webscraper(object):
                         print(f'{Fore.GREEN}NEW PRODUCTS ALERT!{Style.RESET_ALL} E-mail has been sent. Time: {self.get_current_time()}')
                         for webpage in new_products:
                             for product in new_products[webpage]:
-                                print(f'\t{webpage}: {Fore.GREEN}{product}{Style.RESET_ALL} ({new_products_prices[webpage][product]})')
+                                print(f'\t- {webpage}: {product} ({new_products_prices[webpage][product]})')
                         print('')
                         alerts += 1
                         last_alert = self.get_current_time()
