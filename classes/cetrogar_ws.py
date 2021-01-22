@@ -16,14 +16,18 @@ class CetrogarWS(BaseWS):
         items_grid = page_soup.find('div', {'class': 'products wrapper grid products-grid'})
         if items_grid is not None:
             products_li = items_grid.find_all('li')
-            self.products_prices = {
-                self.get_product(product): self.get_final_price(product) 
-                    for product in products_li if self.keywords is None or self.any_keyword_is_present(self.get_product(product))}
+            for product_li in products_li:
+                product = self.get_product(product_li)
+                if product is not None and (self.keywords is None or self.any_keyword_is_present(product)):
+                    self.products_prices[product] = self.get_final_price(product_li)
 
         return self.products_prices
 
     def get_product(self, bs4_element):
-        return bs4_element.find('a', {'class': 'product-item-link'}).text.replace('\n', '').strip()
+        product = bs4_element.find('a', {'class': 'product-item-link'})
+        if product is not None:
+            product = product.text.replace('\n', '').strip()
+        return product
 
     def get_final_price(self, bs4_element):
         return bs4_element.find('span', {'data-price-type': 'finalPrice'}).find('span', {'class': 'price'}).text.strip()
