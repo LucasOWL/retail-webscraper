@@ -27,7 +27,7 @@ Place chromedriver.exe inside a folder. For example: 'C:\webdrivers'
 
 Add path (C:\webdrivers) to system environment variables.
 
-Modify parameters.py and fill secrets.py with credentials. Password must be a Gmail app password.
+Modify config.json and fill secrets.py with credentials. Password must be a Gmail app password.
 
 ## Execution
 Step into installation folder and activate virtual environment:
